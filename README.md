@@ -3,7 +3,7 @@
 [![Docker Pulls](https://img.shields.io/docker/v/tweeeeester/restic-b2-backup?sort=semver)](https://hub.docker.com/r/tweeeeester/restic-b2-backup)
 ___
 
-Simple docker build to run backups with Restic and Backblaze B2 [DockerHub](https://hub.docker.com/r/tweeeeester/restic-b2-backup)
+Simple docker build to run backups with Restic and Backblaze B2 
 
 ## .ENV
 ```commandline

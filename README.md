@@ -1,4 +1,8 @@
 # Restic B2 Backup
+[![Docker Pulls](https://img.shields.io/badge/github-repo-blue?logo=github)](https://github.com/Tweeeeester/restic-b2-backup)
+[![Docker Pulls](https://img.shields.io/docker/v/tweeeeester/restic-b2-backup?sort=semver)](https://hub.docker.com/r/tweeeeester/restic-b2-backup)
+___
+
 Simple docker build to run backups with Restic and Backblaze B2 [DockerHub](https://hub.docker.com/r/tweeeeester/restic-b2-backup)
 
 ## .ENV

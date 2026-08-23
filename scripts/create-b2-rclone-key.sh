@@ -81,31 +81,51 @@ if [[ "$ALL_BUCKETS" == true ]]; then
   echo "    listBuckets,listFiles,writeFiles,deleteFiles"
   echo ""
 
-  b2 key create \
+  KEY_OUTPUT="$(b2 key create \
     "$KEY_NAME" \
-    listBuckets,listFiles,writeFiles,deleteFiles
+    listBuckets,listFiles,writeFiles,deleteFiles)"
 else
   echo "==> Creating scoped key '$KEY_NAME' restricted to bucket '$BUCKET_NAME'"
   echo "    Capabilities: listBuckets,listFiles,writeFiles,deleteFiles"
   echo ""
 
-  b2 key create \
+  KEY_OUTPUT="$(b2 key create \
     --bucket "$BUCKET_NAME" \
     "$KEY_NAME" \
-    listBuckets,listFiles,writeFiles,deleteFiles
+    listBuckets,listFiles,writeFiles,deleteFiles)"
+fi
+
+echo "$KEY_OUTPUT"
+
+# The b2 CLI prints "<keyID> <applicationKey>" on the last line of output
+# (any warnings/notices it emits come before that). Pull the two values
+# apart so we can label them instead of leaving two bare strings.
+KEY_LINE="$(echo "$KEY_OUTPUT" | tail -n 1)"
+read -r KEY_ID APP_KEY <<< "$KEY_LINE"
+
+echo ""
+if [[ -n "$KEY_ID" && -n "$APP_KEY" ]]; then
+  echo "==> New application key:"
+  echo ""
+  echo "    Key ID (B2_ACCOUNT):           $KEY_ID"
+  echo "    Application Key (B2_KEY):      $APP_KEY"
+else
+  echo "==> Could not parse the key ID / application key from the output"
+  echo "    above (unrecognized b2 CLI output format) — copy them from"
+  echo "    the raw output printed above instead."
 fi
 
 echo ""
-echo "==> Done. Copy the keyID and applicationKey printed above into your"
-echo "    rclone command, e.g.:"
+echo "==> Done. Copy the keyID and applicationKey above into your rclone"
+echo "    command, e.g.:"
 echo ""
 if [[ "$ALL_BUCKETS" == true ]]; then
   echo "    rclone sync /app/repo :b2:<bucket-name> \\"
 else
   echo "    rclone sync /app/repo :b2:$BUCKET_NAME \\"
 fi
-echo "      --b2-account '<keyID from above>' \\"
-echo "      --b2-key '<applicationKey from above>' \\"
+echo "      --b2-account '${KEY_ID:-<keyID from above>}' \\"
+echo "      --b2-key '${APP_KEY:-<applicationKey from above>}' \\"
 echo "      --fast-list --b2-hard-delete --transfers 10"
 echo ""
 echo "    Note: this application key CANNOT be listed again later — if you"
